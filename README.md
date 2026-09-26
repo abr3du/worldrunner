@@ -6,13 +6,13 @@ A team running game: runners log real on-foot distance, and that distance moves 
 
 **[Download the latest Worldrunner test APK](https://github.com/abr3du/worldrunner/releases/latest/download/worldrunner-test-debug.apk)**
 
-This is a debug build that runs entirely on fake data, so it needs no account and no backend. Android 8.0 or newer.
+This is a debug build that runs entirely on fake data, so it needs no account and no backend. Android 8.0 or newer. Runs you log and your unit choice live only in memory: they reset to the sample data when Android fully closes the app.
 
 1. Open the link above on your phone and download the APK.
 2. Tap the downloaded file. Android will say installing from this source is not allowed: tap **Settings**, turn on **Allow from this source** for the app you downloaded with (your browser or Files app), then go back and tap **Install**.
 3. If Play Protect warns about an unknown app, tap **More details → Install anyway**. It warns because the test build is not from the Play Store.
 
-Newer test builds install over the old one and keep its data. Every build is listed under [Releases](https://github.com/abr3du/worldrunner/releases), each with a `.sha256` checksum.
+Newer test builds install over the old one. Every build is listed under [Releases](https://github.com/abr3du/worldrunner/releases), each with a `.sha256` checksum.
 
 ## Publishing a test build
 
