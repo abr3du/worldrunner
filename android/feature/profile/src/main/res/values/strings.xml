@@ -1,0 +1,5 @@
+<resources>
+    <string name="units">Units</string>
+    <string name="kilometres">Kilometres</string>
+    <string name="miles">Miles</string>
+</resources>

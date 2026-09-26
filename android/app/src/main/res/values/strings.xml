@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Worldrunner</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_teams">Teams</string>
+    <string name="tab_standings">Standings</string>
+    <string name="tab_profile">Profile</string>
+</resources>

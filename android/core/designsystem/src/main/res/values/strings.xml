@@ -1,0 +1,7 @@
+<resources>
+    <string name="sync_pending">Pending</string>
+    <string name="sync_confirmed">Confirmed</string>
+    <string name="sync_needs_attention">Needs attention</string>
+    <string name="zone_promotion">Promotion zone</string>
+    <string name="zone_relegation">Relegation zone</string>
+</resources>

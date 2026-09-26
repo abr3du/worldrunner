@@ -1,0 +1,5 @@
+<resources>
+    <string name="route_progress">Route progress</string>
+    <string name="route_travelled">%1$s of %2$s around the world · next: %3$s</string>
+    <string name="your_team">Your team</string>
+</resources>

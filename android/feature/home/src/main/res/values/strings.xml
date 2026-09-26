@@ -1,0 +1,20 @@
+<resources>
+    <string name="log_run">Log run</string>
+    <string name="season_week">%1$s · Week %2$d</string>
+    <string name="weekly_total">Your weekly total</string>
+    <string name="pending_provisional">+ %1$s pending (provisional)</string>
+    <string name="week_closes">Week closes %1$s</string>
+    <string name="team_impact">Your teams</string>
+    <string name="rank_in_league">#%1$d in %2$s</string>
+    <string name="this_week_runs">This week\'s runs</string>
+    <string name="no_runs_yet">No runs yet this week.</string>
+    <string name="distance_in">Distance (%1$s)</string>
+    <string name="run_date">Date: %1$s</string>
+    <string name="save">Save</string>
+    <string name="error_not_a_number">Enter a number, like 5.2</string>
+    <string name="error_not_positive">Distance must be more than zero</string>
+    <string name="error_in_future">Runs can\'t be in the future</string>
+    <string name="error_week_closed">That week has closed</string>
+    <string name="error_over_run_limit">A single run can be at most %1$s</string>
+    <string name="error_over_day_limit">Runs on one day can total at most %1$s</string>
+</resources>

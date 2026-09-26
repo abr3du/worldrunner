@@ -1,0 +1,8 @@
+<resources>
+    <string name="your_teams">Your teams</string>
+    <string name="rank_in_league">#%1$d in %2$s</string>
+    <string name="season_total">Season total: %1$s</string>
+    <string name="weekly_totals">This week</string>
+    <string name="you">%1$s (you)</string>
+    <string name="back">Back</string>
+</resources>
