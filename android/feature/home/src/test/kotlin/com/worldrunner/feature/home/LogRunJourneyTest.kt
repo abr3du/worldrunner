@@ -2,10 +2,13 @@ package com.worldrunner.feature.home
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
@@ -44,7 +47,7 @@ class LogRunJourneyTest {
     fun loggedRunShowsPendingThenConfirmed() {
         compose.setContent { HomeRoute(onTeamClick = {}, viewModel = viewModel) }
 
-        compose.onNodeWithText("Log run", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Log run").performClick()
         compose.onNodeWithText("Distance (km)").performTextInput("7.5")
         compose.onNodeWithText("Save").performClick()
 
@@ -63,7 +66,7 @@ class LogRunJourneyTest {
     fun runOverTheLimitShowsAnErrorAndStaysOpen() {
         compose.setContent { HomeRoute(onTeamClick = {}, viewModel = viewModel) }
 
-        compose.onNodeWithText("Log run", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Log run").performClick()
         compose.onNodeWithText("Distance (km)").performTextInput("120")
         compose.onNodeWithText("Save").performClick()
 
@@ -75,10 +78,18 @@ class LogRunJourneyTest {
         store.setUnit(DistanceUnit.Miles)
         compose.setContent { HomeRoute(onTeamClick = {}, viewModel = viewModel) }
 
-        compose.onNodeWithText("Log run", useUnmergedTree = true).performClick()
+        compose.onNodeWithContentDescription("Log run").performClick()
         compose.onNodeWithText("Distance (mi)").performTextInput("70")
         compose.onNodeWithText("Save").performClick()
 
         compose.onNodeWithText("A single run can be at most 62.1 mi").assertIsDisplayed()
+    }
+
+    @Test
+    fun logRunButtonIsAnnouncedWithItsLabel() {
+        compose.setContent { HomeRoute(onTeamClick = {}, viewModel = viewModel) }
+
+        // The merged tree is what TalkBack reads: the clickable button itself must carry the label.
+        compose.onNode(hasClickAction() and hasContentDescription("Log run")).assertIsDisplayed()
     }
 }

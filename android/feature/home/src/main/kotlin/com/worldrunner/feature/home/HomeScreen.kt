@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -58,10 +59,14 @@ fun HomeRoute(onTeamClick: (String) -> Unit, viewModel: HomeViewModel = hiltView
 fun HomeScreen(state: HomeUiState, onLogRunClick: () -> Unit, onTeamClick: (String) -> Unit) {
     Scaffold(
         floatingActionButton = {
+            val label = stringResource(R.string.log_run)
+            // ExtendedFloatingActionButton hides its text from semantics, which leaves
+            // TalkBack announcing an unnamed "Button"; label the button itself.
             ExtendedFloatingActionButton(
                 onClick = onLogRunClick,
+                modifier = Modifier.semantics { contentDescription = label },
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.log_run)) },
+                text = { Text(label) },
             )
         },
     ) { padding ->
