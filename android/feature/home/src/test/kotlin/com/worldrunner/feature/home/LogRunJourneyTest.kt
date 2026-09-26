@@ -14,6 +14,7 @@ import com.worldrunner.core.data.fake.FakeGameStore
 import com.worldrunner.core.data.fake.FakeRunRepository
 import com.worldrunner.core.data.fake.FakeRunnerRepository
 import com.worldrunner.core.data.fake.FakeTeamRepository
+import com.worldrunner.core.model.DistanceUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -67,5 +68,17 @@ class LogRunJourneyTest {
         compose.onNodeWithText("Save").performClick()
 
         compose.onNodeWithText("A single run can be at most 100.0 km").assertIsDisplayed()
+    }
+
+    @Test
+    fun limitErrorUsesTheRunnersUnit() {
+        store.setUnit(DistanceUnit.Miles)
+        compose.setContent { HomeRoute(onTeamClick = {}, viewModel = viewModel) }
+
+        compose.onNodeWithText("Log run", useUnmergedTree = true).performClick()
+        compose.onNodeWithText("Distance (mi)").performTextInput("70")
+        compose.onNodeWithText("Save").performClick()
+
+        compose.onNodeWithText("A single run can be at most 62.1 mi").assertIsDisplayed()
     }
 }

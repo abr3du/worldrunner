@@ -51,7 +51,7 @@ fun LogRunSheet(
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(stringResource(R.string.log_run), style = MaterialTheme.typography.titleLarge)
-            val error = errorText(state)
+            val error = errorText(state, unit)
             OutlinedTextField(
                 value = state.distanceText,
                 onValueChange = onDistanceChange,
@@ -98,14 +98,14 @@ private fun RunDatePicker(state: LogRunState, onPicked: (LocalDate) -> Unit, onD
 }
 
 @Composable
-private fun errorText(state: LogRunState): String? = when {
+private fun errorText(state: LogRunState, unit: DistanceUnit): String? = when {
     state.invalidNumber -> stringResource(R.string.error_not_a_number)
     else -> when (val e = state.error) {
         null, RunValidation.Valid -> null
         RunValidation.NotPositive -> stringResource(R.string.error_not_positive)
         RunValidation.InFuture -> stringResource(R.string.error_in_future)
         RunValidation.WeekClosed -> stringResource(R.string.error_week_closed)
-        is RunValidation.OverRunLimit -> stringResource(R.string.error_over_run_limit, e.limit.format(DistanceUnit.Kilometres))
-        is RunValidation.OverDayLimit -> stringResource(R.string.error_over_day_limit, e.limit.format(DistanceUnit.Kilometres))
+        is RunValidation.OverRunLimit -> stringResource(R.string.error_over_run_limit, e.limit.format(unit))
+        is RunValidation.OverDayLimit -> stringResource(R.string.error_over_day_limit, e.limit.format(unit))
     }
 }
