@@ -17,6 +17,8 @@ android {
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true
+        // Lets StandingsMapScreenshotTest capture real pixels on Robolectric's native graphics.
+        unitTests.all { it.systemProperty("robolectric.pixelCopyRenderMode", "hardware") }
     }
 }
 

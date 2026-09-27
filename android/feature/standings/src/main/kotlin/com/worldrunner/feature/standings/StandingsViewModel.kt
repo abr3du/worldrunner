@@ -24,6 +24,8 @@ data class StandingsUiState(
     val myTeams: List<Team>,
     val selectedTeamId: String,
     val view: LeagueView?,
+    /** The Team identified on the map and in the list; null when none is picked. */
+    val highlightedTeamId: String? = null,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -34,6 +36,7 @@ class StandingsViewModel @Inject constructor(
     standingsRepository: StandingsRepository,
 ) : ViewModel() {
     private val selected = MutableStateFlow<String?>(null)
+    private val highlighted = MutableStateFlow<String?>(null)
     private val myTeams = teamRepository.observeMyTeams()
 
     val uiState: StateFlow<StandingsUiState?> = combine(myTeams, selected) { teams, id -> teams to (id ?: teams.firstOrNull()?.team?.id) }
@@ -41,8 +44,9 @@ class StandingsViewModel @Inject constructor(
             if (id == null) {
                 flowOf(null)
             } else {
-                combine(runnerRepository.runner, standingsRepository.observeLeague(id)) { runner, view ->
-                    StandingsUiState(runner.unit, teams.map { it.team }, id, view)
+                combine(runnerRepository.runner, standingsRepository.observeLeague(id), highlighted) { runner, view, highlight ->
+                    val inLeague = highlight?.takeIf { h -> view?.league?.standings?.any { it.team.id == h } == true }
+                    StandingsUiState(runner.unit, teams.map { it.team }, id, view, inLeague)
                 }
             }
         }
@@ -50,5 +54,10 @@ class StandingsViewModel @Inject constructor(
 
     fun selectTeam(teamId: String) {
         selected.value = teamId
+    }
+
+    /** Identifies [teamId] on the map and in the list, from a marker tap or a row tap. */
+    fun highlightTeam(teamId: String) {
+        highlighted.value = teamId
     }
 }

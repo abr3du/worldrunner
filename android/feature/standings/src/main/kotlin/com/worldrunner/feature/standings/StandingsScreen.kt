@@ -1,6 +1,9 @@
 package com.worldrunner.feature.standings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -31,16 +35,21 @@ import com.worldrunner.core.designsystem.ZoneLabel
 import com.worldrunner.core.model.DistanceUnit
 import com.worldrunner.core.model.RouteProgress
 import com.worldrunner.core.model.Standing
+import com.worldrunner.feature.standings.map.WorldMapCard
 
 @Composable
 fun StandingsRoute(viewModel: StandingsViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val current = state ?: return
-    StandingsScreen(current, onSelectTeam = viewModel::selectTeam)
+    val current = state
+    if (current?.view == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        return
+    }
+    StandingsScreen(current, onSelectTeam = viewModel::selectTeam, onHighlightTeam = viewModel::highlightTeam)
 }
 
 @Composable
-fun StandingsScreen(state: StandingsUiState, onSelectTeam: (String) -> Unit) {
+fun StandingsScreen(state: StandingsUiState, onSelectTeam: (String) -> Unit, onHighlightTeam: (String) -> Unit = {}) {
     val view = state.view ?: return
     LazyColumn(
         Modifier.fillMaxSize(),
@@ -62,9 +71,14 @@ fun StandingsScreen(state: StandingsUiState, onSelectTeam: (String) -> Unit) {
         }
         item { RouteCard(view.routeProgress, state.unit) }
         item {
+            WorldMapCard(view.league.standings, state.unit, state.highlightedTeamId, onSelectTeam = onHighlightTeam)
+        }
+        item {
             Text(view.league.name, style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
         }
-        items(view.league.standings, key = { it.team.id }) { StandingRow(it, state.unit) }
+        items(view.league.standings, key = { it.team.id }) {
+            StandingRow(it, state.unit, highlighted = it.team.id == state.highlightedTeamId, onClick = { onHighlightTeam(it.team.id) })
+        }
     }
 }
 
@@ -83,11 +97,16 @@ private fun RouteCard(route: RouteProgress, unit: DistanceUnit) {
 }
 
 @Composable
-private fun StandingRow(standing: Standing, unit: DistanceUnit) {
+private fun StandingRow(standing: Standing, unit: DistanceUnit, highlighted: Boolean, onClick: () -> Unit) {
     val mine = standing.team.isMine
     val background = if (mine) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
     Row(
-        Modifier.fillMaxWidth().background(background).padding(horizontal = 8.dp, vertical = 12.dp),
+        Modifier
+            .fillMaxWidth()
+            .selectable(selected = highlighted, onClick = onClick)
+            .background(background)
+            .then(if (highlighted) Modifier.border(2.dp, MaterialTheme.colorScheme.onSurface) else Modifier)
+            .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text("${standing.rank}", modifier = Modifier.width(32.dp), style = MaterialTheme.typography.titleMedium)

@@ -13,6 +13,7 @@ import com.worldrunner.core.model.Team
 import com.worldrunner.core.model.TeamDetail
 import com.worldrunner.core.model.TeammateTotal
 import com.worldrunner.core.model.Week
+import com.worldrunner.core.model.WorldRoute
 import com.worldrunner.core.model.Zone
 import com.worldrunner.core.model.sum
 import com.worldrunner.core.model.validateRun
@@ -96,10 +97,8 @@ class FakeGameStore(
         return TeamDetail(standing.team, league.name, standing, roster.sortedByDescending { it.weeklyTotal })
     }
 
-    fun routeProgress(travelled: Distance): RouteProgress {
-        val next = route.firstOrNull { (_, km) -> Distance.kilometres(km) > travelled }?.first ?: route.last().first
-        return RouteProgress(travelled, Distance.kilometres(WORLD_ROUTE_KM), next)
-    }
+    fun routeProgress(travelled: Distance): RouteProgress =
+        RouteProgress(travelled, WorldRoute.length, WorldRoute.positionAt(travelled).next.name)
 
     fun currentWeek(): Week = Week.containing(LocalDate.now(clock))
 
@@ -146,13 +145,7 @@ class FakeGameStore(
         "lunch-break" to listOf("Priya" to 15.0, "Dev" to 9.8, "Lee" to 5.0),
     )
 
-    private val route = listOf(
-        "Madrid" to 503.0, "Barcelona" to 1_008.0, "Marseille" to 1_347.0, "Milan" to 1_833.0,
-        "Vienna" to 2_453.0, "Budapest" to 2_666.0, "Belgrade" to 3_046.0, "Istanbul" to 3_985.0,
-    )
-
     private companion object {
-        const val WORLD_ROUTE_KM = 40_075.0
         const val PROMOTED = 2
         const val RELEGATED = 2
         const val LOWEST_TIER = 4
