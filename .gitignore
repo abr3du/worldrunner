@@ -2,3 +2,6 @@
 *.jks
 *.keystore
 signing.env
+
+# IDE state.
+.idea/

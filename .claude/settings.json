@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew *)",
+      "Bash(cd android && ./gradlew *)",
+      "PowerShell(.\\gradlew.bat *)",
+      "Bash(adb devices)",
+      "Bash(adb logcat *)"
+    ]
+  }
+}
