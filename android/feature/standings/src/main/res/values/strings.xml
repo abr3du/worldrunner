@@ -2,4 +2,25 @@
     <string name="route_progress">Route progress</string>
     <string name="route_travelled">%1$s of %2$s around the world · next: %3$s</string>
     <string name="your_team">Your team</string>
+    <string name="map_title">Team distance map</string>
+    <string name="map_disclaimer">Each marker shows a Team\'s accumulated distance as a point along one virtual route, starting in %1$s and heading east around the world (%2$s per lap). These are not real locations.</string>
+    <string name="map_loading">Loading map…</string>
+    <string name="map_error">The map could not be loaded.</string>
+    <string name="map_retry">Try again</string>
+    <string name="map_empty">No teams to show yet.</string>
+    <string name="map_content_description">World map with the route and %1$d team markers. The standings list below has the same information.</string>
+    <string name="map_zoom_in">Zoom in</string>
+    <string name="map_zoom_out">Zoom out</string>
+    <string name="map_reset">Show whole world</string>
+    <string name="map_select_hint">Tap a marker or a team below to see its rank and distance. Tap a group to zoom in.</string>
+    <string name="map_selected_team">#%1$d %2$s</string>
+    <string name="map_selected_detail">%1$s · lap %2$d · %3$s</string>
+    <string name="map_at_place">at %1$s</string>
+    <string name="map_between_places">between %1$s and %2$s</string>
+    <string name="legend_route">Route</string>
+    <string name="legend_start">Start (%1$s)</string>
+    <string name="legend_team">Other team (rank)</string>
+    <string name="legend_your_team">Your team (rank)</string>
+    <string name="legend_group">Overlapping teams (+count)</string>
+    <string name="map_attribution">Land outlines: Made with Natural Earth (public domain).</string>
 </resources>

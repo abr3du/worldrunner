@@ -82,6 +82,10 @@ The transition between Seasons: Promotion and Relegation are applied, Inactive t
 **Standing**:
 A Team's rank and total distance within its League at a point in the Season. Ties are broken first by the number of Runners with a nonzero Weekly total in the Season, then by Team age (older ranks higher).
 
+**Route**:
+The one fixed, virtual loop around the world that every Team follows: from Lisbon eastwards and back, defined in [`docs/route.md`](docs/route.md).
+_Avoid_: Track, course
+
 **Route progress**:
-A visual representation of a Team's total distance as a position along a virtual world route. It does not affect scoring.
+A visual representation of a Team's total distance as a position along the Route. It does not affect scoring.
 _Avoid_: Score, checkpoint progress
