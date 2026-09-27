@@ -2,6 +2,13 @@
     <string name="route_progress">Route progress</string>
     <string name="route_travelled">%1$s of %2$s around the world · next: %3$s</string>
     <string name="your_team">Your team</string>
+    <string name="imported_league">kmspiel league</string>
+    <string name="league_loading">Loading standings…</string>
+    <string name="league_error">The standings could not be loaded.</string>
+    <string name="league_empty">This league has no teams yet.</string>
+    <string name="source_title">%1$s · season %2$s</string>
+    <string name="source_updated">Snapshot of the standings on %1$s, retrieved %2$s UTC. Not live: it changes only when the app is updated.</string>
+    <string name="source_url">Source: %1$s</string>
     <string name="map_title">Team distance map</string>
     <string name="map_disclaimer">Each marker shows a Team\'s accumulated distance as a point along one virtual route, starting in %1$s and heading east around the world (%2$s per lap). These are not real locations.</string>
     <string name="map_loading">Loading map…</string>
