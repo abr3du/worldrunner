@@ -36,8 +36,9 @@ class StandingsMapScreenshotTest {
     private val store = FakeGameStore(Clock.fixed(Instant.parse("2026-09-23T10:00:00Z"), ZoneOffset.UTC), TestScope())
     private val viewModel = StandingsViewModel(FakeRunnerRepository(store), FakeTeamRepository(store), FakeStandingsRepository(store))
 
-    private fun capture(name: String) {
-        viewModel.highlightTeam("night-owls")
+    private fun capture(name: String, league: LeagueChoice, highlight: String) {
+        viewModel.selectLeague(league)
+        viewModel.highlightTeam(highlight)
         compose.setContent { WorldrunnerTheme(dynamicColor = false) { StandingsRoute(viewModel) } }
         compose.waitUntil(timeoutMillis = 10_000) {
             compose.onAllNodesWithContentDescription("World map with the route", substring = true).fetchSemanticsNodes().isNotEmpty()
@@ -51,9 +52,21 @@ class StandingsMapScreenshotTest {
 
     @Test
     @Config(sdk = [35], qualifiers = "w393dp-h851dp-xxhdpi")
-    fun phone() = capture("standings-map-phone")
+    fun phone() = capture("standings-map-phone", OWN, "night-owls")
 
     @Test
     @Config(sdk = [35], qualifiers = "w1024dp-h768dp-land-mdpi")
-    fun tablet() = capture("standings-map-tablet")
+    fun tablet() = capture("standings-map-tablet", OWN, "night-owls")
+
+    @Test
+    @Config(sdk = [35], qualifiers = "w393dp-h851dp-xxhdpi")
+    fun importedPhone() = capture("standings-map-kmspiel-phone", LeagueChoice.Imported, "kmspiel:LG Albatros Kiel")
+
+    @Test
+    @Config(sdk = [35], qualifiers = "w1024dp-h768dp-land-mdpi")
+    fun importedTablet() = capture("standings-map-kmspiel-tablet", LeagueChoice.Imported, "kmspiel:LG Albatros Kiel")
+
+    private companion object {
+        val OWN = LeagueChoice.MyTeam("trail-mix")
+    }
 }

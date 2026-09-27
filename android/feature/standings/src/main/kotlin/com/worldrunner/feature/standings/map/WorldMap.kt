@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -102,8 +102,11 @@ fun WorldMapCard(
             )
             Box(
                 Modifier
+                    // Width first, then height from the aspect ratio: capping height alone let the box overflow
+                    // the card on wide screens and cover the text around it.
+                    .align(Alignment.CenterHorizontally)
+                    .widthIn(max = 840.dp)
                     .fillMaxWidth()
-                    .heightIn(max = 420.dp)
                     .aspectRatio(2f)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                     .clipToBounds(),

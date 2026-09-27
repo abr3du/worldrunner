@@ -6,6 +6,7 @@ import com.worldrunner.core.model.League
 import com.worldrunner.core.model.RouteProgress
 import com.worldrunner.core.model.Run
 import com.worldrunner.core.model.RunValidation
+import com.worldrunner.core.model.StandingsSource
 import com.worldrunner.core.model.Runner
 import com.worldrunner.core.model.TeamDetail
 import com.worldrunner.core.model.Week
@@ -32,9 +33,20 @@ interface TeamRepository {
     fun observeTeam(teamId: String): Flow<TeamDetail?>
 }
 
-data class LeagueView(val league: League, val routeProgress: RouteProgress)
+/** A League with the highlighted Team's Route progress. [source] is set when the Standings were imported. */
+data class LeagueView(val league: League, val routeProgress: RouteProgress, val source: StandingsSource? = null)
+
+/** A League that may still be loading or may have failed to load. */
+sealed interface LeagueState {
+    data object Loading : LeagueState
+    data class Loaded(val view: LeagueView) : LeagueState
+    data class Failed(val reason: String) : LeagueState
+}
 
 interface StandingsRepository {
     /** The League that [teamId] competes in this Season. */
     fun observeLeague(teamId: String): Flow<LeagueView?>
+
+    /** The imported kmspiel League snapshot; see docs/adr/0003-kmspiel-standings-prototype.md. */
+    fun observeImportedLeague(): Flow<LeagueState>
 }

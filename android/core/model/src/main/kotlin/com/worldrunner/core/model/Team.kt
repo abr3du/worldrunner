@@ -1,5 +1,8 @@
 package com.worldrunner.core.model
 
+import java.time.Instant
+import java.time.LocalDate
+
 data class Team(
     val id: String,
     val name: String,
@@ -45,3 +48,13 @@ data class RouteProgress(
 ) {
     val fraction: Float get() = (travelled.metres.toDouble() / routeLength.metres).coerceIn(0.0, 1.0).toFloat()
 }
+
+/** Where imported Standings came from, so a snapshot is never mistaken for live Worldrunner data. */
+data class StandingsSource(
+    val competition: String,
+    val season: String,
+    /** The date the source page showed its Standings for. */
+    val asOf: LocalDate,
+    val url: String,
+    val retrievedAt: Instant,
+)

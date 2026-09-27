@@ -53,6 +53,7 @@ Decisions in this document use `AD-n` IDs. Standalone records in `docs/adr/` use
 | AD-8 | Treat server rules and calculations as authoritative | Accepted |
 | [0001](./adr/0001-independent-successor.md) | Independent successor to kmspiel, not a client of it | Accepted |
 | [0002](./adr/0002-cloudflare-workers-d1-backend.md) | Backend on Cloudflare Workers with D1 | Accepted |
+| [0003](./adr/0003-kmspiel-standings-prototype.md) | Test app shows a snapshot of real kmspiel league standings | Accepted |
 
 ## 5. Architecture
 

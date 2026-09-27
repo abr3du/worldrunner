@@ -18,7 +18,7 @@ The code is `WorldRoute` in `:core:model`. A distance maps to one deterministic 
 
 ## Map
 
-The Standings screen draws the route and one marker per Team in the League on a world map:
+The Standings screen draws the route and one marker per Team in the League on a world map. It opens on the imported kmspiel league ([ADR 0003](adr/0003-kmspiel-standings-prototype.md)), whose Teams are placed the same way from their season distance:
 
 - Land outlines are [Natural Earth](https://www.naturalearthdata.com) 1:110m land (public domain), bundled as `feature/standings/src/main/res/raw/world_land.txt`. Regenerate the file with `python3 tools/world_land.py`. The map needs no network, tile server, API key, or map account.
 - The projection is equirectangular, cropped to latitudes 84° N to 58° S. The route is split where it crosses the antimeridian (between Tokyo and Honolulu).

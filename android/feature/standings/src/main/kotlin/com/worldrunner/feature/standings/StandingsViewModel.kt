@@ -2,6 +2,7 @@ package com.worldrunner.feature.standings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.worldrunner.core.data.LeagueState
 import com.worldrunner.core.data.LeagueView
 import com.worldrunner.core.data.RunnerRepository
 import com.worldrunner.core.data.StandingsRepository
@@ -15,17 +16,30 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+
+/** Which League the Standings screen shows. */
+sealed interface LeagueChoice {
+    /** The kmspiel League imported as a snapshot; the default. */
+    data object Imported : LeagueChoice
+
+    /** The League of one of the Runner's own Teams. */
+    data class MyTeam(val teamId: String) : LeagueChoice
+}
 
 data class StandingsUiState(
     val unit: DistanceUnit,
     val myTeams: List<Team>,
-    val selectedTeamId: String,
+    val choice: LeagueChoice,
+    /** Null while the League is loading or when it failed to load. */
     val view: LeagueView?,
     /** The Team identified on the map and in the list; null when none is picked. */
     val highlightedTeamId: String? = null,
+    /** Why the League could not be loaded; null unless loading failed. */
+    val loadError: String? = null,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -35,25 +49,27 @@ class StandingsViewModel @Inject constructor(
     teamRepository: TeamRepository,
     standingsRepository: StandingsRepository,
 ) : ViewModel() {
-    private val selected = MutableStateFlow<String?>(null)
+    private val choice = MutableStateFlow<LeagueChoice>(LeagueChoice.Imported)
     private val highlighted = MutableStateFlow<String?>(null)
     private val myTeams = teamRepository.observeMyTeams()
 
-    val uiState: StateFlow<StandingsUiState?> = combine(myTeams, selected) { teams, id -> teams to (id ?: teams.firstOrNull()?.team?.id) }
-        .flatMapLatest { (teams, id) ->
-            if (id == null) {
-                flowOf(null)
-            } else {
-                combine(runnerRepository.runner, standingsRepository.observeLeague(id), highlighted) { runner, view, highlight ->
-                    val inLeague = highlight?.takeIf { h -> view?.league?.standings?.any { it.team.id == h } == true }
-                    StandingsUiState(runner.unit, teams.map { it.team }, id, view, inLeague)
-                }
+    val uiState: StateFlow<StandingsUiState?> = combine(myTeams, choice, ::Pair)
+        .flatMapLatest { (teams, choice) ->
+            val league: Flow<LeagueState> = when (choice) {
+                LeagueChoice.Imported -> standingsRepository.observeImportedLeague()
+                is LeagueChoice.MyTeam -> standingsRepository.observeLeague(choice.teamId)
+                    .map { view -> view?.let { LeagueState.Loaded(it) } ?: LeagueState.Loading }
+            }
+            combine(runnerRepository.runner, league, highlighted) { runner, state, highlight ->
+                val view = (state as? LeagueState.Loaded)?.view
+                val inLeague = highlight?.takeIf { h -> view?.league?.standings?.any { it.team.id == h } == true }
+                StandingsUiState(runner.unit, teams.map { it.team }, choice, view, inLeague, (state as? LeagueState.Failed)?.reason)
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-    fun selectTeam(teamId: String) {
-        selected.value = teamId
+    fun selectLeague(league: LeagueChoice) {
+        choice.value = league
     }
 
     /** Identifies [teamId] on the map and in the list, from a marker tap or a row tap. */

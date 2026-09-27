@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: accepted; narrowed for the prototype by ADR 0003
 ---
 
 # Worldrunner is an independent successor to kmspiel, not a client of it

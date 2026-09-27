@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,40 +36,51 @@ import com.worldrunner.core.designsystem.ZoneLabel
 import com.worldrunner.core.model.DistanceUnit
 import com.worldrunner.core.model.RouteProgress
 import com.worldrunner.core.model.Standing
+import com.worldrunner.core.model.StandingsSource
 import com.worldrunner.feature.standings.map.WorldMapCard
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun StandingsRoute(viewModel: StandingsViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val current = state
-    if (current?.view == null) {
+    if (current == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         return
     }
-    StandingsScreen(current, onSelectTeam = viewModel::selectTeam, onHighlightTeam = viewModel::highlightTeam)
+    StandingsScreen(current, onSelectLeague = viewModel::selectLeague, onHighlightTeam = viewModel::highlightTeam)
 }
 
 @Composable
-fun StandingsScreen(state: StandingsUiState, onSelectTeam: (String) -> Unit, onHighlightTeam: (String) -> Unit = {}) {
-    val view = state.view ?: return
+fun StandingsScreen(state: StandingsUiState, onSelectLeague: (LeagueChoice) -> Unit, onHighlightTeam: (String) -> Unit = {}) {
+    val view = state.view
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (state.myTeams.size > 1) {
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    state.myTeams.forEach { team ->
-                        FilterChip(
-                            selected = team.id == state.selectedTeamId,
-                            onClick = { onSelectTeam(team.id) },
-                            label = { Text(team.name) },
-                        )
-                    }
+        item {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = state.choice == LeagueChoice.Imported,
+                    onClick = { onSelectLeague(LeagueChoice.Imported) },
+                    label = { Text(stringResource(R.string.imported_league)) },
+                )
+                state.myTeams.forEach { team ->
+                    FilterChip(
+                        selected = state.choice == LeagueChoice.MyTeam(team.id),
+                        onClick = { onSelectLeague(LeagueChoice.MyTeam(team.id)) },
+                        label = { Text(team.name) },
+                    )
                 }
             }
         }
+        if (view == null) {
+            item { LeagueStatus(state.loadError) }
+            return@LazyColumn
+        }
+        view.source?.let { item { SourceCard(it) } }
         item { RouteCard(view.routeProgress, state.unit) }
         item {
             WorldMapCard(view.league.standings, state.unit, state.highlightedTeamId, onSelectTeam = onHighlightTeam)
@@ -76,8 +88,42 @@ fun StandingsScreen(state: StandingsUiState, onSelectTeam: (String) -> Unit, onH
         item {
             Text(view.league.name, style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
         }
+        if (view.league.standings.isEmpty()) {
+            item { Text(stringResource(R.string.league_empty), style = MaterialTheme.typography.bodyMedium) }
+        }
         items(view.league.standings, key = { it.team.id }) {
             StandingRow(it, state.unit, highlighted = it.team.id == state.highlightedTeamId, onClick = { onHighlightTeam(it.team.id) })
+        }
+    }
+}
+
+/** Loading or failure of the selected League; the map and list need its Standings. */
+@Composable
+private fun LeagueStatus(error: String?) {
+    Column(
+        Modifier.fillMaxWidth().padding(vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (error == null) {
+            CircularProgressIndicator()
+            Text(stringResource(R.string.league_loading), style = MaterialTheme.typography.bodyMedium)
+        } else {
+            Text(stringResource(R.string.league_error), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+            Text(error, style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+/** Where imported Standings came from and when, so a snapshot is never taken for live data. */
+@Composable
+private fun SourceCard(source: StandingsSource) {
+    val retrieved = source.retrievedAt.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(R.string.source_title, source.competition, source.season), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.source_updated, source.asOf.toString(), retrieved), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.source_url, source.url), style = MaterialTheme.typography.bodySmall)
         }
     }
 }

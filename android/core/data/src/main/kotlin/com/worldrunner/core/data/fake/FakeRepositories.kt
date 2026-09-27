@@ -1,10 +1,12 @@
 package com.worldrunner.core.data.fake
 
+import com.worldrunner.core.data.LeagueState
 import com.worldrunner.core.data.LeagueView
 import com.worldrunner.core.data.RunRepository
 import com.worldrunner.core.data.RunnerRepository
 import com.worldrunner.core.data.StandingsRepository
 import com.worldrunner.core.data.TeamRepository
+import com.worldrunner.core.data.snapshot.StandingsSnapshot
 import com.worldrunner.core.model.Distance
 import com.worldrunner.core.model.DistanceUnit
 import com.worldrunner.core.model.Run
@@ -12,7 +14,10 @@ import com.worldrunner.core.model.RunValidation
 import com.worldrunner.core.model.Runner
 import com.worldrunner.core.model.TeamDetail
 import com.worldrunner.core.model.Week
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -45,5 +50,11 @@ class FakeStandingsRepository @Inject constructor(private val store: FakeGameSto
             val mine = league.standings.first { it.team.id == teamId }
             LeagueView(league, store.routeProgress(mine.totalDistance))
         }
+    }
+
+    override fun observeImportedLeague(): Flow<LeagueState> = flow {
+        emit(LeagueState.Loading)
+        val result = runCatching { withContext(Dispatchers.IO) { StandingsSnapshot.readBundled() } }
+        emit(result.fold({ LeagueState.Loaded(it) }, { LeagueState.Failed(it.message ?: it.toString()) }))
     }
 }

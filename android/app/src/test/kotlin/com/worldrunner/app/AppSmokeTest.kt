@@ -2,6 +2,7 @@ package com.worldrunner.app
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,7 +29,11 @@ class AppSmokeTest {
         compose.onNodeWithText("Sam (you)").assertIsDisplayed()
 
         compose.onNodeWithText("Standings").performClick()
-        compose.onNodeWithText("Route progress").assertIsDisplayed()
+        // Standings opens on the imported kmspiel snapshot, which loads off the main thread.
+        compose.waitUntil(timeoutMillis = 10_000) {
+            compose.onAllNodesWithText("kmspiel 4. Liga · season 2026-2").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("kmspiel 4. Liga · season 2026-2").assertIsDisplayed()
 
         compose.onNodeWithText("Profile").performClick()
         compose.onNodeWithText("Miles").assertIsDisplayed()
