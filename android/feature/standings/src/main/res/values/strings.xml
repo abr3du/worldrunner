@@ -15,7 +15,10 @@
     <string name="map_error">The map could not be loaded.</string>
     <string name="map_retry">Try again</string>
     <string name="map_empty">No teams to show yet.</string>
-    <string name="map_content_description">World map with the route and %1$d team markers. The standings list below has the same information.</string>
+    <plurals name="map_content_description">
+        <item quantity="one">World map with the route and %1$d team marker. The standings list below has the same information.</item>
+        <item quantity="other">World map with the route and %1$d team markers. The standings list below has the same information.</item>
+    </plurals>
     <string name="map_zoom_in">Zoom in</string>
     <string name="map_zoom_out">Zoom out</string>
     <string name="map_reset">Show whole world</string>

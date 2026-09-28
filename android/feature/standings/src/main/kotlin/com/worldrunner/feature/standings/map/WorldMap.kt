@@ -50,8 +50,9 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -85,7 +86,7 @@ fun WorldMapCard(
     onSelectTeam: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     var attempt by remember { mutableIntStateOf(0) }
     var land by remember { mutableStateOf<LandState>(LandState.Loading) }
     LaunchedEffect(attempt) {
@@ -188,7 +189,7 @@ private fun MapCanvas(
         }
     }
 
-    val description = stringResource(R.string.map_content_description, standings.size)
+    val description = pluralStringResource(R.plurals.map_content_description, standings.size, standings.size)
     Box(Modifier.fillMaxSize()) {
         Canvas(
             Modifier
