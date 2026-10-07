@@ -1,6 +1,5 @@
 package com.worldrunner.feature.home
 
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
@@ -9,8 +8,10 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import com.worldrunner.core.data.fake.FakeGameStore
@@ -41,7 +42,7 @@ class LogRunJourneyTest {
     private val clock = Clock.fixed(Instant.parse("2026-09-23T10:00:00Z"), ZoneOffset.UTC)
     private val sync = TestScope(StandardTestDispatcher())
     private val store = FakeGameStore(clock, sync)
-    private val viewModel = HomeViewModel(FakeRunnerRepository(store), FakeRunRepository(store), FakeTeamRepository(store), clock)
+    private val viewModel = HomeViewModel(FakeRunnerRepository(store), FakeRunRepository(store), FakeTeamRepository(store), FakeRecordedRunSource(), clock)
 
     @Test
     fun loggedRunShowsPendingThenConfirmed() {
@@ -58,8 +59,10 @@ class LogRunJourneyTest {
         sync.testScheduler.advanceUntilIdle()
         compose.waitForIdle()
         compose.onNodeWithText("Confirmed").assertIsDisplayed()
-        // The Run row and the now-confirmed weekly total.
-        compose.onAllNodesWithText("7.5 km").assertCountEquals(2)
+        compose.onNodeWithText("7.5 km").assertIsDisplayed()
+        // The weekly total, at the top, now includes the confirmed Run.
+        compose.onNode(hasScrollAction()).performScrollToIndex(0)
+        compose.onAllNodesWithText("7.5 km").onFirst().assertIsDisplayed()
     }
 
     @Test

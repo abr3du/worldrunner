@@ -2,7 +2,9 @@ package com.worldrunner.core.data
 
 import com.worldrunner.core.model.Distance
 import com.worldrunner.core.model.DistanceUnit
+import com.worldrunner.core.model.ImportResult
 import com.worldrunner.core.model.League
+import com.worldrunner.core.model.RecordedRun
 import com.worldrunner.core.model.RouteProgress
 import com.worldrunner.core.model.Run
 import com.worldrunner.core.model.RunValidation
@@ -11,6 +13,7 @@ import com.worldrunner.core.model.Runner
 import com.worldrunner.core.model.TeamDetail
 import com.worldrunner.core.model.Week
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 import java.time.LocalDate
 
 interface RunnerRepository {
@@ -24,6 +27,27 @@ interface RunRepository {
 
     /** Validates and queues a Run. It starts as Pending; the server result replaces that state. */
     suspend fun logRun(date: LocalDate, distance: Distance): RunValidation
+
+    /** Logs each of [recorded] not imported before as a Run, under the same rules as [logRun]. */
+    suspend fun importRuns(recorded: List<RecordedRun>): ImportResult
+}
+
+enum class RecordedRunAvailability { Available, NeedsUpdate, Unavailable }
+
+/**
+ * Runs other apps recorded (Garmin Connect, Strava, ...), read from Health Connect on this phone.
+ * See docs/adr/0004-import-runs-from-health-connect.md.
+ */
+interface RecordedRunSource {
+    fun availability(): RecordedRunAvailability
+
+    /** The Health Connect permissions [read] needs; request them with PermissionController's contract. */
+    val requiredPermissions: Set<String>
+
+    suspend fun hasPermissions(): Boolean
+
+    /** On-foot recordings that started at or after [since]. */
+    suspend fun read(since: Instant): List<RecordedRun>
 }
 
 interface TeamRepository {

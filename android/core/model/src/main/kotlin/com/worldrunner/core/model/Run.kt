@@ -2,11 +2,13 @@ package com.worldrunner.core.model
 
 import java.time.LocalDate
 
+/** [recording] is set when the Run was imported from another app rather than typed in. */
 data class Run(
     val id: String,
     val date: LocalDate,
     val distance: Distance,
     val status: SyncStatus,
+    val recording: RecordedRun? = null,
 ) {
     val week: Week get() = Week.containing(date)
 }

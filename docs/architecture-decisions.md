@@ -33,7 +33,7 @@ Profiles, training diaries, races, forums, chat, and similar kmspiel features ar
 - English is the initial UI language. Strings are externalized so more locales can be added.
 - Phones are the primary form factor. Tablets and foldables remain usable through adaptive layouts.
 - Minimum Android version is API 26 (Android 8.0).
-- Runs are entered manually in the MVP. Health Connect import is later work.
+- Runs are entered manually or imported from Health Connect ([ADR 0004](./adr/0004-import-runs-from-health-connect.md)).
 - The server is authoritative for Seasons, Weeks, Week close, Memberships, totals, Standings, and conflict resolution.
 - Rule values are server configuration, not app constants. Current values: Team size cap 10; 3 Memberships per Season; Joining cutoff at the end of Week 4; Run limits of 100 km per Run and 150 km per day; 10 Teams per League; 2 promoted and 2 relegated per League.
 
@@ -54,6 +54,7 @@ Decisions in this document use `AD-n` IDs. Standalone records in `docs/adr/` use
 | [0001](./adr/0001-independent-successor.md) | Independent successor to kmspiel, not a client of it | Accepted |
 | [0002](./adr/0002-cloudflare-workers-d1-backend.md) | Backend on Cloudflare Workers with D1 | Accepted |
 | [0003](./adr/0003-kmspiel-standings-prototype.md) | Test app shows a snapshot of real kmspiel league standings | Accepted |
+| [0004](./adr/0004-import-runs-from-health-connect.md) | Import Runs from Health Connect, not Strava or Garmin APIs | Accepted |
 
 ## 5. Architecture
 
@@ -178,8 +179,7 @@ Accessibility is part of the definition of done: scalable text, meaningful seman
 - Sign in with Google (Credential Manager) or an email magic link. The backend issues short-lived access tokens and rotating refresh tokens. No passwords exist in the system.
 - Store token-encryption keys with Android Keystore-backed facilities. Never store credentials or tokens in Room, DataStore plaintext, crash reports, analytics, or logs.
 - Redact network logs in all builds, and disable diagnostic HTTP bodies in release builds.
-- Request no location, contacts, or health permission for the manual-entry MVP.
-- If Health Connect is added later, make it an explicit opt-in integration with the minimum activity permissions and a documented duplicate-detection policy.
+- Request no location or contacts permission. The only health permissions are read-only exercise sessions and distance, requested when the Runner first imports Runs; the duplicate-detection policy is in [ADR 0004](./adr/0004-import-runs-from-health-connect.md).
 - Account deletion is in the MVP. It deletes the Account, its Runs, and its Display name. Distance already credited in closed Weeks stays with the Team as anonymous distance, so final Standings never change retroactively.
 - The only notification is an opt-in reminder on Monday evening, sent if the Runner logged no Runs in the previous Week. It is off by default, and the app offers it after the first Run.
 - Keep secrets and environment configuration outside source control. Keep development, staging, and production environments separate.
@@ -220,7 +220,7 @@ CI should run static analysis, unit tests, and Compose tests appropriate for pul
 ## 11. Deliberately deferred decisions
 
 - Visual identity and final branding (the name, content, and branding must be original)
-- Health Connect or device imports
+- Background Run import, and direct Strava or Garmin connections ([ADR 0004](./adr/0004-import-runs-from-health-connect.md))
 - Public team directory, join requests, and moderation or report flows
 - Playoffs and Route checkpoints or achievements
 - Social features: profiles, diaries, races, forums, and chat

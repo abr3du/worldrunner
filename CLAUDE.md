@@ -28,7 +28,7 @@ Modules (`android/settings.gradle.kts`), using type-safe project accessors (`pro
 
 - `:app`: single activity, `WorldrunnerApp` owns the `NavHost` and the bottom bar of four top-level tabs (Home, Teams, Standings, Profile).
 - `:feature:*`: each feature exposes a `@Serializable` route object and a `NavGraphBuilder.xxxScreen(...)` extension in `*Navigation.kt`; `:app` wires them together and passes navigation callbacks (for example `onTeamClick(teamId)`). Navigation passes IDs, never objects. Screens use Hilt `ViewModel`s exposing `StateFlow` UI state.
-- `:core:data`: repository interfaces in `Repositories.kt`. `di/DataModule.kt` binds them to `Fake*Repository` implementations backed by `FakeGameStore`, an in-memory stand-in for the server that applies the server's rules (Run validation, simulated Pending to Confirmed / NeedsAttention sync after a delay). Real implementations must keep the same interfaces.
+- `:core:data`: repository interfaces in `Repositories.kt`. `di/DataModule.kt` binds them to `Fake*Repository` implementations backed by `FakeGameStore`, an in-memory stand-in for the server that applies the server's rules (Run validation, simulated Pending to Confirmed / NeedsAttention sync after a delay). Real implementations must keep the same interfaces. `health/HealthConnectRunSource.kt` is the one real data source: it reads Runs that other apps recorded from Health Connect for the Home import button (ADR 0004).
 - `:core:model`: immutable domain models and rules (distance, Week/Season calendar, Run validation, Route).
 - `:core:designsystem`: theme and shared UI such as status labels.
 

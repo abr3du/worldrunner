@@ -19,8 +19,12 @@ _Avoid_: Username, nickname
 ## Distance
 
 **Run**:
-One on-foot activity (running or walking, including treadmill) logged by a Runner with its distance. Other movement, such as cycling, is not a Run. Runs are self-reported and trusted, within the Run limits.
+One on-foot activity (running or walking, including treadmill) logged by a Runner with its distance, typed in or imported. Other movement, such as cycling, is not a Run. Runs are self-reported and trusted, within the Run limits.
 _Avoid_: Entry, DistanceEntry, Activity, Workout
+
+**Imported run**:
+A Run read from another app's recording of an on-foot session (Garmin Connect, Strava, and others, through Health Connect) instead of being typed in. It follows the same Run limits and Week close as any Run, and each recording is imported at most once.
+_Avoid_: Synced activity, sync (reserve "sync" for sending Runs to the server)
 
 **Run limits**:
 The maximum distance allowed for a single Run and for one Runner's Runs on one day. A Run beyond either limit is rejected.

@@ -2,7 +2,9 @@ package com.worldrunner.core.data.fake
 
 import com.worldrunner.core.model.Distance
 import com.worldrunner.core.model.DistanceUnit
+import com.worldrunner.core.model.ImportResult
 import com.worldrunner.core.model.League
+import com.worldrunner.core.model.RecordedRun
 import com.worldrunner.core.model.RouteProgress
 import com.worldrunner.core.model.Run
 import com.worldrunner.core.model.RunValidation
@@ -14,6 +16,7 @@ import com.worldrunner.core.model.TeamDetail
 import com.worldrunner.core.model.TeammateTotal
 import com.worldrunner.core.model.Week
 import com.worldrunner.core.model.WorldRoute
+import com.worldrunner.core.model.newRecordings
 import com.worldrunner.core.model.Zone
 import com.worldrunner.core.model.sum
 import com.worldrunner.core.model.validateRun
@@ -44,19 +47,26 @@ class FakeGameStore(
 
     fun setUnit(unit: DistanceUnit) = _runner.update { it.copy(unit = unit) }
 
-    fun logRun(date: LocalDate, distance: Distance): RunValidation {
+    fun logRun(date: LocalDate, distance: Distance, recording: RecordedRun? = null): RunValidation {
         val sameDay = _runs.value.filter { it.date == date }.map { it.distance }.sum()
         val result = validateRun(distance, date, LocalDate.now(clock), clock.instant(), sameDay)
         if (result != RunValidation.Valid) return result
 
         val id = UUID.randomUUID().toString()
-        _runs.update { it + Run(id, date, distance, SyncStatus.Pending) }
+        _runs.update { it + Run(id, date, distance, SyncStatus.Pending, recording) }
         syncScope.launch {
             delay(syncDelayMillis)
             val confirmed = if (Week.containing(date).isOpenAt(clock.instant())) SyncStatus.Confirmed else SyncStatus.NeedsAttention
             _runs.update { runs -> runs.map { if (it.id == id) it.copy(status = confirmed) else it } }
         }
         return result
+    }
+
+    /** Logs a Run for each of [recorded] not imported before; see [newRecordings]. */
+    fun importRuns(recorded: List<RecordedRun>): ImportResult {
+        val fresh = newRecordings(recorded, _runs.value)
+        val imported = fresh.count { logRun(it.date, it.distance, it) == RunValidation.Valid }
+        return ImportResult(imported, rejected = fresh.size - imported)
     }
 
     /** Builds the League containing [teamId] from the current Runs. */

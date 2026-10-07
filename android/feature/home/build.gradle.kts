@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.androidx.health.connect.client)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

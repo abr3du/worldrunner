@@ -17,4 +17,21 @@
     <string name="error_week_closed">That week has closed</string>
     <string name="error_over_run_limit">A single run can be at most %1$s</string>
     <string name="error_over_day_limit">Runs on one day can total at most %1$s</string>
+    <string name="import_runs">Import runs from Health Connect</string>
+    <string name="importing_runs">Importing runs…</string>
+    <string name="import_runs_sources">Runs from Garmin Connect, Strava and other apps that share with Health Connect, in the weeks still open</string>
+    <plurals name="import_done">
+        <item quantity="one">Imported %1$d run.</item>
+        <item quantity="other">Imported %1$d runs.</item>
+    </plurals>
+    <string name="import_none_new">No new runs to import.</string>
+    <plurals name="import_rejected">
+        <item quantity="one">%1$d run was skipped: it has no distance or is over the run limits.</item>
+        <item quantity="other">%1$d runs were skipped: they have no distance or are over the run limits.</item>
+    </plurals>
+    <string name="import_unavailable">Health Connect isn\'t available on this phone.</string>
+    <string name="import_needs_update">Health Connect needs an update before runs can be imported.</string>
+    <string name="import_permission_denied">Allow Worldrunner to read exercise and distance in Health Connect to import runs.</string>
+    <string name="import_failed">Couldn\'t read runs from Health Connect. Try again.</string>
+    <string name="import_open">Open</string>
 </resources>

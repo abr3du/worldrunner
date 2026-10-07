@@ -9,6 +9,8 @@ import com.worldrunner.core.data.TeamRepository
 import com.worldrunner.core.data.snapshot.StandingsSnapshot
 import com.worldrunner.core.model.Distance
 import com.worldrunner.core.model.DistanceUnit
+import com.worldrunner.core.model.ImportResult
+import com.worldrunner.core.model.RecordedRun
 import com.worldrunner.core.model.Run
 import com.worldrunner.core.model.RunValidation
 import com.worldrunner.core.model.Runner
@@ -34,6 +36,8 @@ class FakeRunRepository @Inject constructor(private val store: FakeGameStore) : 
         store.runs.map { runs -> runs.filter { it.week == week }.sortedByDescending { it.date } }
 
     override suspend fun logRun(date: LocalDate, distance: Distance): RunValidation = store.logRun(date, distance)
+
+    override suspend fun importRuns(recorded: List<RecordedRun>): ImportResult = store.importRuns(recorded)
 }
 
 class FakeTeamRepository @Inject constructor(private val store: FakeGameStore) : TeamRepository {

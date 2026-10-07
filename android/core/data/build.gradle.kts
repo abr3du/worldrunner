@@ -19,6 +19,7 @@ kotlin {
 dependencies {
     api(projects.core.model)
     api(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.health.connect.client)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

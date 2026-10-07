@@ -4,4 +4,7 @@
     <string name="tab_teams">Teams</string>
     <string name="tab_standings">Standings</string>
     <string name="tab_profile">Profile</string>
+    <string name="health_rationale_title">How Worldrunner uses Health Connect</string>
+    <string name="health_rationale_body">Worldrunner reads your running, walking and hiking sessions and their distance from Health Connect, only when you tap Import runs. Apps like Garmin Connect and Strava put them there.\n\nEach imported session becomes a Run with its date and distance, and that distance counts for your Teams like a Run you log by hand. Other Runners see totals, never your individual Runs.\n\nWorldrunner reads nothing else, such as heart rate, routes or location, and never writes to Health Connect. You can remove its access at any time in Health Connect.</string>
+    <string name="health_rationale_close">Close</string>
 </resources>
